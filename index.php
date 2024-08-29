@@ -121,7 +121,7 @@
         <div id="messageDiv" style="display: none;"></div>
 
         <div class="px-4 mt-4" data-aos="fade-up">
-          <button id="endAttendance" class="btn btn-lg btn-outline-primary p-2 w-100">End Attendance</button>
+          <button id="endAttendance" class="btn btn-lg btn-outline-danger p-2 w-100">End Attendance</button>
         </div>
       </div>
     </section>

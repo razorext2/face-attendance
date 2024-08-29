@@ -1,4 +1,4 @@
-const labels = ["Abdi"];
+const labels = ["Abdi", "Chelsea"];
 const uploadedImages = new Map(); // To keep track of uploaded images and their confidence scores
 let detectedFaces = [];
 let sendingData = false;
@@ -8,9 +8,12 @@ const video = document.getElementById("video");
 const videoContainer = document.querySelector(".video-container");
 const videoOverlay = document.getElementById("overlay");
 const startButton = document.getElementById("startButton");
+const endButton = document.getElementById("endAttendance");
 const overlay = document.getElementById("overlay"); // Overlay canvas
 let webcamStarted = false;
 let modelsLoaded = false;
+
+endButton.setAttribute("disabled", "disabled");
 
 // Load models
 Promise.all([
@@ -28,6 +31,8 @@ Promise.all([
 startButton.addEventListener("click", async () => {
   videoContainer.style.display = "flex";
   videoOverlay.style.display = "flex";
+  startButton.setAttribute("disabled", "disabled");
+  endButton.removeAttribute("disabled");
   if (!webcamStarted && modelsLoaded) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -40,6 +45,14 @@ startButton.addEventListener("click", async () => {
     } catch (error) {
       console.error("Error accessing webcam:", error);
     }
+  } else if (webcamStarted && modelsLoaded) {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    video.srcObject = stream;
+    videoStream = stream;
+    webcamStarted = true;
   }
 });
 
@@ -228,5 +241,7 @@ async function saveImageToServer(imageBlob) {
 
 document.getElementById("endAttendance").addEventListener("click", function () {
   videoOverlay.style.display = "none";
+  startButton.removeAttribute("disabled");
+  endButton.setAttribute("disabled", "disabled");
   stopWebcam();
 });
