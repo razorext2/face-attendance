@@ -1,10 +1,11 @@
+<?php include 'dbcon.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Index - QuickStart Bootstrap Template</title>
+  <title>FaceID Attendance System</title>
   <meta name="description" content="" />
   <meta name="keywords" content="" />
 
@@ -34,23 +35,31 @@
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet" />
+  <style>
+    canvas {
+      position: absolute;
+    }
 
-  <!-- =======================================================
-  * Template Name: QuickStart
-  * Template URL: https://bootstrapmade.com/quickstart-bootstrap-startup-website-template/
-  * Updated: Aug 07 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    .video-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #video {
+      border-radius: 10px;
+      box-shadow: #000;
+    }
+  </style>
+  <script defer src="face-api.min.js"></script>
+  <script defer src="script.js"></script>
 </head>
 
 <body class="index-page">
   <header id="header" class="header d-flex align-items-center fixed-top">
-    <div
-      class="container-fluid container-xl position-relative d-flex align-items-center">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
       <a href="index.html" class="logo d-flex align-items-center me-auto">
         <img src="assets/img/logo.png" alt="" />
-        <h1 class="sitename">QuickStart</h1>
       </a>
 
       <nav id="navmenu" class="navmenu" style="visibility: hidden;">
@@ -64,7 +73,6 @@
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-
     </div>
   </header>
 
@@ -76,32 +84,30 @@
       </div>
       <div class="container text-center">
         <div class="d-flex flex-column justify-content-center align-items-center">
-          <h1 data-aos="fade-up">Welcome to <span>QuickStart</span></h1>
-          <p data-aos="fade-up" data-aos-delay="100">
-            Quickly start your project now and set the stage for success<br />
+          <h1 data-aos="fade-up">FaceID Attendance System</h1>
+          <p data-aos="fade-up" data-aos-delay="100" class="mt-2">
+            Klik tombol start, kemudian biarkan aplikasi mendeteksi wajah anda. <br />Informasi mengenai anda akan muncul di bagian sebelah kanan<br />
           </p>
 
-          <!-- <img
-            src="assets/img/hero-services-img.webp"
-            class="img-fluid hero-img"
-            alt=""
-            data-aos="zoom-out"
-            data-aos-delay="50" /> -->
+          <div id="studentTableContainer"></div>
+
         </div>
 
-
-        <div class="px-4 mt-5" data-aos="fade-up">
+        <div class="px-4" data-aos="fade-up">
           <div class="row gx-3">
             <div class="col-lg-8">
-              <div class="p-3 border bg-light rounded" style="height:500px;">
-                <video id="videoAttend" autoplay class="w-100 h-100" style="display:block;"></video>
+              <div class="p-3 border bg-light rounded video-container" style="max-height:500px !important;">
+                <!-- Video Element with Placeholder Image -->
+                <video width="640px" height="480px" id="video" autoplay style="background: url('assets/img/noCamera.png') center center / cover no-repeat;"></video>
+                <canvas width="640px" height="480px" id="overlay" class="overlay"></canvas>
               </div>
             </div>
-            <div class=" col">
+            <div class="col">
               <div class="p-3 border bg-light rounded" style="min-height:500px;">
                 <div class="d-flex flex-column justify-content-center align-items-center">
                   <h3 class="text-dark">Informasi</h3>
-                  <canvas id="canvAttend" class="w-100 h-50 bg-dark rounded mt-3"> </canvas>
+                  <!-- Canvas Element with Placeholder Image -->
+                  <!-- <canvas id="canvAttend" class="w-100 bg-dark rounded mt-3" style="background: url('assets/img/noImage.png') center center / contain no-repeat;"></canvas> -->
                 </div>
               </div>
             </div>
@@ -109,35 +115,33 @@
         </div>
 
         <div class="px-4 mt-3" data-aos="fade-up">
-          <button id="captureAttend" class="btn btn-lg btn-outline-primary p-2 w-100"> Start Camera </button>
+          <button id="startButton" class="btn btn-lg btn-outline-primary p-2 w-100">Start Camera</button>
         </div>
 
+        <div id="messageDiv" style="display: none;"></div>
+
+        <div class="px-4 mt-4" data-aos="fade-up">
+          <button id="endAttendance" class="btn btn-lg btn-outline-primary p-2 w-100">End Attendance</button>
+        </div>
       </div>
     </section>
     <!-- /Hero Section -->
   </main>
 
   <footer id="footer" class="footer position-relative white-background">
-    <div class="container copyright text-center mt-4">
+    <div class="container copyright text-center mt-3">
       <p>
-        © <span>Copyright</span>
-        <strong class="px-1 sitename">QuickStart</strong><span>All Rights Reserved</span>
+        <?= date('Y') ?> © <span>Copyright</span>
+        <strong class="px-1 sitename">Indodacin FaceID</strong><span>All Rights Reserved</span>
       </p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+      <div class="credits" style="visibility:hidden; display:none;">
         Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
   </footer>
 
   <!-- Scroll Top -->
-  <a
-    href="#"
-    id="scroll-top"
-    class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Preloader -->
   <div id="preloader"></div>
@@ -151,57 +155,6 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      let stream = null;
-
-      const video = document.getElementById('videoAttend');
-      const canvas = document.getElementById('canvAttend');
-      const btn = document.getElementById('captureAttend');
-
-      btn.addEventListener('click', () => {
-        if (!stream) {
-          // Start the camera
-          navigator.mediaDevices.getUserMedia({
-              video: true
-            })
-            .then(mediaStream => {
-              stream = mediaStream;
-              video.srcObject = stream;
-              video.style.display = 'block';
-              btn.textContent = 'Capture Photo';
-            })
-            .catch(error => {
-              console.error("Error accessing the camera: ", error);
-              alert("Unable to access the camera. Please check your permissions and device settings.");
-            });
-        } else {
-          // Capture the photo
-          capturePhoto();
-        }
-      });
-
-      function capturePhoto() {
-        const context = canvas.getContext('2d');
-
-        // Ensure canvas size matches the video element
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        // Draw the video frame to the canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Stop the camera
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-        }
-        video.style.display = 'none';
-        stream = null;
-        btn.textContent = 'Start Camera';
-      }
-    });
-  </script>
-
 </body>
 
 </html>

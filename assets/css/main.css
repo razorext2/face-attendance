@@ -515,12 +515,13 @@ h6 {
   color: var(--default-color);
   background-color: var(--background-color);
   font-size: 14px;
-  /* padding-bottom: 50px; */
+  padding-bottom: 15px;
+  padding-top: 5px;
   position: relative;
 }
 
 .footer .footer-top {
-  padding-top: 50px;
+  padding-top: 0;
 }
 
 .footer .footer-about .logo {
@@ -656,8 +657,10 @@ h6 {
 } */
 
 .footer .copyright {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  /* padding-top: 10px;
+  padding-bottom: 10px; */
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .footer .copyright p {
@@ -665,7 +668,8 @@ h6 {
 }
 
 .footer .credits {
-  margin-top: 6px;
+  /* margin-top: 6px; */
+  margin-top: 0;
   font-size: 13px;
 }
 
