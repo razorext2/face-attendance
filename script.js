@@ -143,12 +143,12 @@ video.addEventListener("play", async () => {
         });
 
         let shouldCapture = false;
+        let captureLabel = null;
 
         for (const detection of resizedDetections) {
           const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
           const matchConfidence = bestMatch.distance;
 
-          // Only draw bounding boxes for known faces with high confidence
           if (bestMatch.label !== "unknown" && matchConfidence < 0.6) {
             const box = detection.detection.box;
             const drawBox = new faceapi.draw.DrawBox(box, {
@@ -156,12 +156,12 @@ video.addEventListener("play", async () => {
             });
             drawBox.draw(tempCanvas);
 
-            // Check if we need to capture and save the image
             if (
               !uploadedImages.has(bestMatch.label) ||
               uploadedImages.get(bestMatch.label) < matchConfidence
             ) {
               shouldCapture = true;
+              captureLabel = bestMatch.label; // Set label for capturing
               uploadedImages.set(bestMatch.label, matchConfidence);
             }
           }
@@ -170,7 +170,7 @@ video.addEventListener("play", async () => {
         if (shouldCapture) {
           const imageBlob = await captureImage();
           if (imageBlob) {
-            await saveImageToServer(imageBlob);
+            await saveImageToServer(imageBlob, captureLabel); // Pass label to saveImageToServer
           } else {
             console.error("Failed to capture image");
           }
@@ -214,10 +214,11 @@ function captureImage() {
   });
 }
 
-async function saveImageToServer(imageBlob) {
+async function saveImageToServer(imageBlob, label) {
   const formData = new FormData();
   if (imageBlob instanceof Blob) {
     formData.append("image", imageBlob, "capturedImg.png");
+    formData.append("label", label); // Tambahkan label ke FormData
     console.log("Blob appended to FormData");
 
     try {
