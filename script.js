@@ -7,6 +7,7 @@ let videoStream = null;
 const video = document.getElementById("video");
 const videoContainer = document.querySelector(".video-container");
 const videoOverlay = document.getElementById("overlay");
+const canvInfo = document.getElementById("canvAttend");
 const startButton = document.getElementById("startButton");
 const endButton = document.getElementById("endAttendance");
 const overlay = document.getElementById("overlay"); // Overlay canvas
@@ -228,7 +229,11 @@ async function saveImageToServer(imageBlob, label) {
       });
 
       if (response.ok) {
-        console.log("Image saved successfully");
+        const data = await response.json(); // Misalkan server mengembalikan URL gambar dalam format JSON
+        if (data.imageUrl) {
+          console.log("Image saved successfully");
+          displayImageOnCanvas(data.imageUrl); // Tampilkan gambar di canvas
+        }
       } else {
         console.error("Failed to save image");
       }
@@ -237,6 +242,28 @@ async function saveImageToServer(imageBlob, label) {
     }
   } else {
     console.error("The imageBlob is not a valid Blob object.");
+  }
+}
+
+function displayImageOnCanvas(imageUrl) {
+  const canvas = document.getElementById("canvAttend");
+  const context = canvas.getContext("2d");
+
+  if (context) {
+    const img = new Image();
+    img.src = imageUrl;
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+    };
+
+    img.onerror = () => {
+      console.error("Failed to load image:", imageUrl);
+    };
+  } else {
+    console.error("Failed to get canvas context.");
   }
 }
 

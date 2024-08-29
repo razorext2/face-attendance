@@ -10,13 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Simpan gambar
         if (move_uploaded_file($image['tmp_name'], $uploadFile)) {
-            echo "Image saved successfully for label: $label";
+            $imageUrl = "http://localhost/frontend/" . $uploadDir . $label . "/capturedImg/" . basename($image['name']);
+            echo json_encode(["imageUrl" => $imageUrl]);
         } else {
-            echo "Failed to save image";
+            echo json_encode(["error" => "Failed to save image"]);
         }
     } else {
-        echo "No image or label received";
+        echo json_encode(["error" => "No image or label received"]);
     }
 } else {
-    echo "Invalid request method";
+    echo json_encode(["error" => "Invalid request method"]);
 }

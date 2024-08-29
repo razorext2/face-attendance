@@ -36,7 +36,7 @@
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet" />
   <style>
-    canvas {
+    .canvas {
       position: absolute;
     }
 
@@ -99,7 +99,7 @@
               <div class="p-3 border bg-light rounded video-container" style="max-height:500px !important;">
                 <!-- Video Element with Placeholder Image -->
                 <video width="640px" height="480px" id="video" autoplay style="background: url('assets/img/noCamera.png') center center / cover no-repeat;"></video>
-                <canvas width="640px" height="480px" id="overlay" class="overlay"></canvas>
+                <canvas width="640px" height="480px" id="overlay" class="overlay canvas"></canvas>
               </div>
             </div>
             <div class="col">
@@ -107,7 +107,7 @@
                 <div class="d-flex flex-column justify-content-center align-items-center">
                   <h3 class="text-dark">Informasi</h3>
                   <!-- Canvas Element with Placeholder Image -->
-                  <!-- <canvas id="canvAttend" class="w-100 bg-dark rounded mt-3" style="background: url('assets/img/noImage.png') center center / contain no-repeat;"></canvas> -->
+                  <canvas id="canvAttend" class="w-100 bg-white rounded mt-3" style="background: url('assets/img/noImage.png') center center / cover no-repeat;"></canvas>
                 </div>
               </div>
             </div>
