@@ -93,23 +93,23 @@
         <div class="px-4 mt-5" data-aos="fade-up">
           <div class="row gx-3">
             <div class="col-lg-8">
-              <div class="p-3 border bg-light rounded" style="min-height:500px;">
-                <video id="video" class="w-100 h-100"></video>
+              <div class="p-3 border bg-light rounded" style="height:500px;">
+                <video id="videoAttend" autoplay class="w-100 h-100" style="display:block;"></video>
               </div>
             </div>
             <div class=" col">
               <div class="p-3 border bg-light rounded" style="min-height:500px;">
                 <div class="d-flex flex-column justify-content-center align-items-center">
                   <h3 class="text-dark">Informasi</h3>
-                  <hr>
+                  <canvas id="canvAttend" class="w-100 h-50 bg-dark rounded mt-3"> </canvas>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="px-4 mt-4" data-aos="fade-up">
-          <button id="capture" class="btn btn-lg btn-outline-primary p-2 w-100"> Start Camera </button>
+        <div class="px-4 mt-3" data-aos="fade-up">
+          <button id="captureAttend" class="btn btn-lg btn-outline-primary p-2 w-100"> Start Camera </button>
         </div>
 
       </div>
@@ -152,37 +152,56 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
   <script>
-    let stream;
+    document.addEventListener('DOMContentLoaded', () => {
+      let stream = null;
 
-    const video = document.getElementById('video');
-    const btn = document.getElementById('capture');
+      const video = document.getElementById('videoAttend');
+      const canvas = document.getElementById('canvAttend');
+      const btn = document.getElementById('captureAttend');
 
-    btn.addEventListener('click', async () => {
-      if (btn.textContent === 'Start Camera') {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: true
-        });
-        video.srcObject = stream;
-        video.style.display = 'block';
-        btn.textContent = 'Capture';
-      } else if (btn.textContent === 'Capture Photo') {
-        // Capture the photo
+      btn.addEventListener('click', () => {
+        if (!stream) {
+          // Start the camera
+          navigator.mediaDevices.getUserMedia({
+              video: true
+            })
+            .then(mediaStream => {
+              stream = mediaStream;
+              video.srcObject = stream;
+              video.style.display = 'block';
+              btn.textContent = 'Capture Photo';
+            })
+            .catch(error => {
+              console.error("Error accessing the camera: ", error);
+              alert("Unable to access the camera. Please check your permissions and device settings.");
+            });
+        } else {
+          // Capture the photo
+          capturePhoto();
+        }
+      });
+
+      function capturePhoto() {
         const context = canvas.getContext('2d');
+
+        // Ensure canvas size matches the video element
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the video frame to the canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Display the captured image
-        const imageData = canvas.toDataURL('image/png');
-        const img = document.createElement('img');
-        img.src = imageData;
-        document.body.appendChild(img);
-
         // Stop the camera
-        stream.getTracks().forEach(track => track.stop());
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
         video.style.display = 'none';
+        stream = null;
         btn.textContent = 'Start Camera';
       }
-    })
+    });
   </script>
+
 </body>
 
 </html>
